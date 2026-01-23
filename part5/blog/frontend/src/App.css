@@ -1,0 +1,52 @@
+label{
+  display: block;
+  margin-top: 5px;
+}
+
+label:last-of-type{
+  margin-bottom: 5px;
+}
+
+.NewBlogForm input{
+  margin-left: 5px;
+}
+
+.error{
+  color: white;
+  font-size: 20px;
+  background-color: #DE8D8E;
+  width: 50%;
+  padding-left: 5px;
+}
+
+.success{
+  color: white;
+  font-size: 20px;
+  background-color: #61B45E;
+  width: 50%;
+  padding-left: 5px;
+}
+
+.blog{
+  margin-bottom: 10px;
+  max-width: 800px;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 5px;
+}
+
+.blog button{
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+.blogInfo p{
+  margin: 5px;
+}
+
+.likes{
+  display: flex;
+}
+
+.btnDelete{
+  background-color: #DE8D8E;
+}
