@@ -1,34 +1,16 @@
-import { useState } from "react"
-import blogService from '../services/blogs'
+import { useState } from 'react'
 
-const NewBlogForm = ({ blogs, setBlogs, setMessage, setTypeMessage }) => {
+const NewBlogForm = ({ handleCreateBlog }) => {
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [author, setAuthor] = useState('')
 
   const addBlog = async (event) => {
     event.preventDefault()
-    const blogObject = {
-      title: title,
-      url: url,
-      author: author
-    }
-    try {
-      const savedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(savedBlog))
-      setMessage(`a new blog ${title} by ${author} added`)
-      setTypeMessage('success')
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-    } catch (error) {
-      setMessage(`${error.response.data.error}`)
-      setTypeMessage('error')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
-
+    await handleCreateBlog({ title, url, author })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
@@ -38,18 +20,24 @@ const NewBlogForm = ({ blogs, setBlogs, setMessage, setTypeMessage }) => {
         <input type="text"
           value={title}
           name="title"
+          id="title"
+          data-testid="title"
           onChange={({ target }) => setTitle(target.value)} />
       </label>
       <label>Url
         <input type="text"
           value={url}
           name="url"
+          id="url"
+          data-testid="url"
           onChange={({ target }) => setUrl(target.value)} />
       </label>
       <label>Author
         <input type="text"
           value={author}
           name="author"
+          id="author"
+          data-testid="author"
           onChange={({ target }) => setAuthor(target.value)} />
       </label>
       <button type="submit">Create</button>

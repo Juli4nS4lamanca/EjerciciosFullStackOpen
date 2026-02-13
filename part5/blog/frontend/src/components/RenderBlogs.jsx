@@ -1,18 +1,21 @@
-import Blog from "./Blog"
-import BtnDelete from "./BtnDelete"
+import Blog from './Blog'
 
-const RenderBlogs = ({ blogs, user, setBlogs }) => {
+const RenderBlogs = ({ blogs, user, handleDelete, handleLike }) => {
   const blogsRender = () =>
     [...blogs]
       .sort((a, b) => b.likes - a.likes)
-      .map((blog) => (
-        <div key={blog.id} className="blog">
-          <Blog blog={blog} setBlogs={setBlogs} />
-          {blog.user.id === user.id ? 
-          <BtnDelete blog={blog} blogs={blogs} setBlogs={setBlogs} />
-        : <></>}
-        </div>
-      ));
+      .map((blog) => {
+        const creatorId = blog.user.id || blog.user._id || blog.user
+        const loggerUserId = user.id || user._id
+        return (
+          <div key={blog.id} className="blog">
+            <Blog blog={blog} handleLike={handleLike} />
+            {creatorId.toString() === loggerUserId.toString() ?
+              <button className='deleteButton' onClick={() => handleDelete(blog)}>Delete</button>
+              : null}
+          </div>
+        )
+      })
   return (
     <>
       <h2>Blogs</h2>

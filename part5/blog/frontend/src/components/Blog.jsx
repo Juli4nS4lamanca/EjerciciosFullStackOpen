@@ -1,21 +1,17 @@
-import { useState } from "react"
-import BtnLike from "./BtnLike"
+import { useState } from 'react'
 
-const Blog = ({ blog, setBlogs }) => {
+const Blog = ({ blog, handleLike }) => {
   const [viewInfo, setViewInfo] = useState(false)
-  const [btnLabel, setBtnLabel] = useState("View")
+  const [btnLabel, setBtnLabel] = useState('View')
 
   const infoBlog = () => {
     if (viewInfo) {
       return (
-        <div className="blogInfo">
-          <p>Author: {blog.author}</p>
-          <p>
-            URL: <a href="">{blog.url}</a>
-          </p>
-          <div className="likes">
+        <div className='blogInfo'>
+          <p>URL: <a href=''>{blog.url}</a></p>
+          <div className='likes'>
             <p>Likes: {blog.likes}</p>
-            <BtnLike blog={blog} setBlogs={setBlogs} />
+            <button className='likeButton' onClick={() => handleLike(blog)}>Like</button>
           </div>
           <p>User: {blog.user.name}</p>
         </div>
@@ -26,15 +22,17 @@ const Blog = ({ blog, setBlogs }) => {
   }
 
   const handleViewBtn = () => {
-    setViewInfo(!viewInfo);
-    setBtnLabel(viewInfo ? "View" : "Hide");
+    setViewInfo(!viewInfo)
+    setBtnLabel(viewInfo ? 'View' : 'Hide')
   }
 
   return (
     <div>
-      {blog.title}
+      <div className='blogTitle'>
+        <p>{blog.title} - {blog.author}</p>
+      </div>
       {infoBlog()}
-      <button onClick={handleViewBtn}>{btnLabel}</button>
+      <button onClick={handleViewBtn} className='viewButton'>{btnLabel}</button>
     </div>
   )
 }

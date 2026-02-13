@@ -1,6 +1,6 @@
 const BtnLogout = ({ setUser }) => {
   const logout = () => {
-    window.localStorage.removeItem('loggedBlogappUser')
+    window.sessionStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
   return (

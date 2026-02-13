@@ -16,9 +16,12 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [typeMessage, setTypeMessage] = useState(null)
   const blogFormRef = useRef()
+  const loginFormRef = useRef()
 
   useEffect(() => {
-    const loggedUserJson = window.localStorage.getItem('loggedBlogappUser')
+    /* Con localStorage se guarda la session aunque se cierre el navegador
+    y con sessionStorage se cierra cuando se cierra el navegador*/
+    const loggedUserJson = window.sessionStorage.getItem('loggedBlogappUser')
     if (loggedUserJson) {
       const user = JSON.parse(loggedUserJson)
       setUser(user)
@@ -41,7 +44,7 @@ const App = () => {
   const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      window.sessionStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setMessage(`Welcome ${user.name}`)
@@ -56,11 +59,62 @@ const App = () => {
     }
   }
 
+  const handleLike = async (blog) => {
+
+    try {
+      const updateBlog = await blogService.update(blog)
+      setBlogs(prev => prev.map(b => b.id === blog.id ? updateBlog : b))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    const ok = window.confirm(`Desea eliminar el blog "${blog.title}"?`)
+
+    if (!ok) return
+
+    try {
+      await blogService.remove(blog.id)
+      setBlogs(prev => prev.filter(b => b.id !== blog.id))
+
+    } catch (error) {
+      console.error(error)
+      alert('Error eliminando el blog ', error)
+    }
+  }
+
+  const handleCreateBlog = async ({ title, url, author }) => {
+    const blogObject = { title, url, author }
+    try {
+      const savedBlog = await blogService.create(blogObject)
+      setBlogs(prevBlogs => prevBlogs.concat(savedBlog))
+      setMessage(`a new blog ${title} by ${author} added`)
+      setTypeMessage('success')
+    } catch (error) {
+      setMessage(`${error.response.data.error}`)
+      setTypeMessage('error')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+
+  }
+
   const blogForm = () => {
     return (
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
-        <NewBlogForm blogs={blogs} setBlogs={setBlogs} setMessage={setMessage} setTypeMessage={setTypeMessage} />
+        <NewBlogForm handleCreateBlog={handleCreateBlog} />
       </Togglable>
+    )
+  }
+
+  const loginForm = () => {
+    return (
+      <Togglable buttonLabel="Log In" ref={loginFormRef}>
+        <LoginForm onSubmit={handleLogin} />
+      </Togglable>
+
     )
   }
 
@@ -69,15 +123,16 @@ const App = () => {
       <h1>Blog</h1>
       <Notification message={message} type={typeMessage} />
       {user === null ?
-        <LoginForm onSubmit={handleLogin} />
+        loginForm()
         :
         (
           <>
             <BtnLogout setUser={setUser} />
             {blogForm()}
-            <RenderBlogs blogs={blogs} user={user} setBlogs={setBlogs}/>
+            <RenderBlogs blogs={blogs} user={user} handleDelete={handleDelete} handleLike={handleLike} />
           </>
         )}
+      <p>Blog App, Julian</p>
     </div>
   )
 }
